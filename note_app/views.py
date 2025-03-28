@@ -1,14 +1,14 @@
 # users/views.py
-from rest_framework import generics
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny
-from django.shortcuts import render
 from .serializers import UserSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import generics
+from .models import Note
+from .serializers import NoteSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -31,3 +31,13 @@ class LogoutView(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response(status=204)
+
+
+
+class NoteCreateView(generics.CreateAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
