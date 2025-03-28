@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from note_app.models import Note
+from rest_framework import generics
+from .models import Note
+from rest_framework.permissions import IsAuthenticated
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,3 +20,15 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'user']
+        extra_kwargs = {'user': {'read_only': True}}
+
+
+
+
+class NoteUpdateView(generics.UpdateAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
