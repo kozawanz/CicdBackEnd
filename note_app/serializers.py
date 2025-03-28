@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note
+from note_app.models import Note
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,4 +16,5 @@ class UserSerializer(serializers.ModelSerializer):
 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
-        '__all__'
+        model = Note
+        fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'user']
