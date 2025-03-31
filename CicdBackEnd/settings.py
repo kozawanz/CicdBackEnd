@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -78,17 +79,26 @@ WSGI_APPLICATION = 'CicdBackEnd.wsgi.app'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_6tocOnkRNQi7',
-        'HOST': 'ep-lingering-butterfly-a75p86s6-pooler.ap-southeast-2.aws.neon.tech',
-        'PORT': 5432,
+if "test" in sys.argv or os.getenv("TESTING") == "True":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',  # This creates a temporary in-memory SQLite database
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'neondb',
+            'USER': 'neondb_owner',
+            'PASSWORD': 'npg_6tocOnkRNQi7',
+            'HOST': 'ep-lingering-butterfly-a75p86s6-pooler.ap-southeast-2.aws.neon.tech',
+            'PORT': 5432,
+        }
+    }
 
+print("Using Database:", DATABASES["default"])
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
