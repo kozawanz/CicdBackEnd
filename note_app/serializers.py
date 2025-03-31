@@ -21,14 +21,3 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = ['id', 'title', 'content', 'created_at', 'updated_at', 'user']
         extra_kwargs = {'user': {'read_only': True}}
-
-
-
-
-class NoteUpdateView(generics.UpdateAPIView):
-    queryset = Note.objects.all()
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)

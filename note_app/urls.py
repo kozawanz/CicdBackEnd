@@ -1,7 +1,5 @@
 from django.urls import path
-
-from .serializers import NoteUpdateView
-from .views import RegisterView, LoginView, LogoutView, NoteCreateView, NoteDeleteView, NoteListView
+from .views import RegisterView, LoginView, LogoutView, NoteCreateView, NoteUpdateView, NoteDeleteView, NoteListView
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
