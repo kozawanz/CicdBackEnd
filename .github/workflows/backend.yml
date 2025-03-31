@@ -28,6 +28,9 @@ jobs:
 
       - name: Run tests
         run: python manage.py test
+        
+      - name: Install Vercel CLI
+        run: npm install -g vercel  # Install Vercel globally
 
       - name: Deploy to Vercel
         run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
