@@ -44,38 +44,13 @@ class NoteCreateView(generics.CreateAPIView):
 
 
 
-class NoteUpdateView(generics.UpdateAPIView):
-    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+class NoteUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer  # ✅ Add this line
+    permission_classes = [IsAuthenticated]
 
-    # GET method for fetching the note's details
-    def get(self, request, pk, format=None):
-        try:
-            note = Note.objects.get(pk=pk)
-            # Ensure the user is the one who created the note
-            if note.user != request.user:
-                return Response({"detail": "You do not have permission to view this note."},
-                                status=status.HTTP_403_FORBIDDEN)
-            serializer = NoteSerializer(note)
-            return Response(serializer.data)
-        except Note.DoesNotExist:
-            return Response({"detail": "Note not found."}, status=status.HTTP_404_NOT_FOUND)
-
-    # PUT method for updating the note
-    def put(self, request, pk, format=None):
-        try:
-            note = Note.objects.get(pk=pk)
-            # Ensure the user is the one who created the note
-            if note.user != request.user:
-                return Response({"detail": "You do not have permission to update this note."},
-                                status=status.HTTP_403_FORBIDDEN)
-
-            serializer = NoteSerializer(note, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Note.DoesNotExist:
-            return Response({"detail": "Note not found."}, status=status.HTTP_404_NOT_FOUND)
+    def get_queryset(self):
+        return Note.objects.filter(user=self.request.user)
 
 
 class NoteDeleteView(generics.DestroyAPIView):
